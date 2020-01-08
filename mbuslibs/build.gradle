@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-
+apply plugin: 'com.novoda.bintray-release'
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
@@ -26,7 +26,22 @@ android {
         }
     }
 
+    lintOptions {
+        abortOnError false
+    }
+
+
 }
+
+publish {
+    userOrg = 'wanglingcong'      //bintray注册的用户名
+    groupId = 'com.wlc'         //compile引用时的第1部分groupId
+    artifactId = 'MBus'     //compile引用时的第2部分项目名
+    publishVersion = '1.0.0'    //compile引用时的第3部分版本号
+    desc = 'Changed Eventbus and Arouter'
+    website = 'https://github.com/wanglingcong-wlc/MBus'
+}
+
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
