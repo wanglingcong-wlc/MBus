@@ -48,10 +48,15 @@ public abstract class AbstractSubscriberInfo implements ISubscriberInfo {
 
   protected SubscriberMethod createSubscriberMethod(String methodName, String eventType, Class<?> paramType, ThreadMode threadMode, boolean sticky) {
     try {
-      Method method = subscriberClass.getDeclaredMethod(methodName, paramType);
+      Method method;
+      if (paramType == null) {
+        method = subscriberClass.getDeclaredMethod(methodName);
+      } else {
+        method = subscriberClass.getDeclaredMethod(methodName, paramType);
+      }
       return new SubscriberMethod(method, eventType, paramType, threadMode, sticky);
     } catch (NoSuchMethodException e) {
-      throw new MBusException("Could not find subscriber method in " + subscriberClass +
+      throw new MBusException("Could not find subscriber (" + methodName + " with params " + paramType + ") in " + subscriberClass.toString() +
           ". Maybe a missing ProGuard rule?", e);
     }
   }

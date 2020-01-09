@@ -1,6 +1,8 @@
 package com.wlc.mbuslibs;
 
 import android.content.Context;
+import android.text.TextUtils;
+import android.util.Log;
 
 import com.wlc.Constants;
 import com.wlc.MBase;
@@ -183,6 +185,20 @@ public class MBusMain extends MBase {
   }
 
   /**
+   * @param tag 参数
+   */
+  public void post(Object tag) {
+    post("", tag, null);
+  }
+
+  /**
+   * @param tag 发送的类型名称
+   */
+  public void post(String tag) {
+    post(tag, null, null);
+  }
+
+  /**
    * @param tag 发送的类型名称
    * @param obj 参数
    */
@@ -196,6 +212,13 @@ public class MBusMain extends MBase {
    * @param callBack 返回值回调
    */
   public void post(String tag, Object obj, CallBack callBack) {
+    if (obj == null && TextUtils.isEmpty(tag)) {
+      throw new MBusException("type and param can not be null both");
+    }
+    if (TextUtils.isEmpty(tag)){
+      tag = obj.getClass().getName();
+    }
+
     PostingThreadState postingState = currentPostingThreadState.get();
     List<QueueSingle> eventQueue = postingState.eventQueue;
     eventQueue.add(new QueueSingle(tag, obj, callBack));
@@ -232,6 +255,14 @@ public class MBusMain extends MBase {
     }
 
     postingState.canceled = true;
+  }
+
+  public void postSticky(String tag) {
+    postSticky(tag, null, null);
+  }
+
+  public void postSticky(Object params) {
+    postSticky("", params, null);
   }
 
   public void postSticky(String tag, Object params) {
@@ -290,7 +321,7 @@ public class MBusMain extends MBase {
         logger.log(Level.FINE, "No subscribers registered for event " + eventType);
       }
       if (sendNoSubscriberEvent) {
-        post(NOEVENT, null, null);
+        //post(NOEVENT, null, null);
       }
     }
   }
@@ -302,7 +333,11 @@ public class MBusMain extends MBase {
     }
     if (subscriptions != null && !subscriptions.isEmpty()) {
       for (Subscription subscription : subscriptions) {
-        if (event.getClass() != subscription.subscriberMethod.paramType) {
+        if (event == null && subscription.subscriberMethod.paramType != null) {
+          continue;
+        }
+
+        if (event != null && event.getClass() != subscription.subscriberMethod.paramType) {
           continue;
         }
         postingState.subscription = subscription;
@@ -356,7 +391,12 @@ public class MBusMain extends MBase {
 
   void invokeSubscriber(Subscription subscription, Object event) {
     try {
-      Object object = subscription.subscriberMethod.method.invoke(subscription.subscriber, event);
+      Object object;
+      if (event == null) {
+        object = subscription.subscriberMethod.method.invoke(subscription.subscriber);
+      } else {
+        object = subscription.subscriberMethod.method.invoke(subscription.subscriber, event);
+      }
       if (subscription.callBack != null) {
         subscription.callBack.onReturn(object);
       }

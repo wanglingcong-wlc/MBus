@@ -15,6 +15,9 @@
  */
 package com.wlc.mbuslibs;
 
+import android.text.TextUtils;
+import android.util.Log;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -163,18 +166,28 @@ class SubscriberMethodFinder {
       int modifiers = method.getModifiers();
       if ((modifiers & Modifier.PUBLIC) != 0 && (modifiers & MODIFIERS_IGNORE) == 0) {
         Class<?>[] parameterTypes = method.getParameterTypes();
-        if (parameterTypes.length == 1) {
+        if (parameterTypes.length <= 1) {
           MBus subscribeAnnotation = method.getAnnotation(MBus.class);
+          if (TextUtils.isEmpty(subscribeAnnotation.type()) && (parameterTypes == null || parameterTypes.length == 0)){
+            throw new MBusException("type and param can not be null both");
+          }
           if (subscribeAnnotation != null) {
             if (findState.checkAdd(method, subscribeAnnotation.type())) {
               ThreadMode threadMode = subscribeAnnotation.threadMode();
-              findState.subscriberMethods.add(new SubscriberMethod(method, subscribeAnnotation.type(), parameterTypes[0], threadMode, subscribeAnnotation.isSticky()));
+
+              findState.subscriberMethods.add(new SubscriberMethod(
+                  method,
+                  TextUtils.isEmpty(subscribeAnnotation.type()) ? parameterTypes[0].getName() : subscribeAnnotation.type(),
+                  (parameterTypes == null || parameterTypes.length == 0) ? null : parameterTypes[0],
+                  threadMode,
+                  subscribeAnnotation.isSticky()
+              ));
             }
           }
         } else if (strictMethodVerification && method.isAnnotationPresent(MBus.class)) {
           String methodName = method.getDeclaringClass().getName() + "." + method.getName();
           throw new MBusException("@MBus method " + methodName +
-              "must have exactly 1 parameter but has " + parameterTypes.length);
+              "must have less than 1 parameter but has " + parameterTypes.length);
         }
       } else if (strictMethodVerification && method.isAnnotationPresent(MBus.class)) {
         String methodName = method.getDeclaringClass().getName() + "." + method.getName();

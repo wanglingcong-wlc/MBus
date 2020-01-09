@@ -5,10 +5,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.abc.EventT;
 import com.wlc.mbuslibs.MBus;
 import com.wlc.mbuslibs.MBusMain;
 import com.wlc.mroute.MRoute;
-import com.wlc.mroute.MRouteMain;
+
 
 @MRoute(path = "main")
 public class MainActivity extends BaseActivity {
@@ -18,11 +19,12 @@ public class MainActivity extends BaseActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
+
     findViewById(R.id.text).setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
         //MRouteMain.get().build("secondactivity").navigation(MainActivity.this);
-        //MBusMain.getDefault().register(MainActivity.this);
+        //MBusMain.get().register(MainActivity.this);
         MBusMain.get().post("click", 999);
         MBusMain.get().post("", "2323");
       }
@@ -34,10 +36,15 @@ public class MainActivity extends BaseActivity {
     Log.e("qqqqqqqqqqqqqq","receivenone"+i);
   }
 
-  @MBus(type = "click")
-  public int click(Integer i) {
+  @MBus
+  public int click(EventT i) {
     Log.e("qqqqqqqqqqqqqq","receive"+i);
     return 3556;
   }
 
+  @MBus
+  public int click123(Integer i) {
+    Log.e("qqqqqqqqqqqqqq","receive null params");
+    return 3556;
+  }
 }

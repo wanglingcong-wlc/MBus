@@ -41,7 +41,7 @@ public class SubscriberMethod {  //执行时需要的方法数据
       builder.append(method.getDeclaringClass().getName());
       builder.append('#').append(method.getName());
       builder.append('(').append(eventType);
-      builder.append(')').append(paramType.getName());
+      builder.append(')').append(paramType == null ? "" : paramType.getName());
       methodString = builder.toString();
     }
   }

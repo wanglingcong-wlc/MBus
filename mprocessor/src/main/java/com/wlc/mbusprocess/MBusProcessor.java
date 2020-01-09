@@ -151,7 +151,7 @@ public class MBusProcessor extends AbstractProcessor {
     }
 
     List<? extends VariableElement> parameters = ((ExecutableElement) element).getParameters();
-    if (parameters.size() != 1) {
+    if (parameters.size() > 1) {
       messager.printMessage(Diagnostic.Kind.ERROR, "Subscriber method must have exactly 1 parameter", element);
       return false;
     }
@@ -183,6 +183,11 @@ public class MBusProcessor extends AbstractProcessor {
         if (methods != null) {
           for (ExecutableElement method : methods) {
             String skipReason = null;
+            List paramslist = method.getParameters();
+            if (paramslist == null || paramslist.isEmpty()) {
+              continue;
+            }
+
             VariableElement param = method.getParameters().get(0);
             TypeMirror typeMirror = getParamTypeMirror(param, messager);
             if (!(typeMirror instanceof DeclaredType) ||
@@ -233,7 +238,7 @@ public class MBusProcessor extends AbstractProcessor {
     if (type.getSuperclass().getKind() == TypeKind.DECLARED) {
       TypeElement superclass = (TypeElement) processingEnv.getTypeUtils().asElement(type.getSuperclass());
       String name = superclass.getQualifiedName().toString();
-      if (name.startsWith("java.") || name.startsWith("javax.") || name.startsWith("android.")) {
+      if (name.startsWith("java.") || name.startsWith("javax.") || name.startsWith("android.")|| name.startsWith("androidx.")) {
         // Skip system classes, this just degrades performance
         return null;
       } else {
@@ -251,8 +256,6 @@ public class MBusProcessor extends AbstractProcessor {
     if (packageString != null && !packageString.isEmpty()) {
       if (packageString.equals(myPackage)) {
         className = cutPackage(myPackage, className);
-      } else if (packageString.equals("java.lang")) {
-        className = typeElement.getSimpleName().toString();
       }
     }
     return className;
@@ -280,13 +283,30 @@ public class MBusProcessor extends AbstractProcessor {
                                             String callPrefix, String myPackage) throws IOException {
     for (ExecutableElement method : methods) {
       List<? extends VariableElement> parameters = method.getParameters();
-      TypeMirror paramType = getParamTypeMirror(parameters.get(0), null);
-      TypeElement paramElement = (TypeElement) processingEnv.getTypeUtils().asElement(paramType);
+      String paramClass = "";
+      String paramHeadStr = "";
+      if (parameters == null || parameters.isEmpty()) {
+        paramClass = "null";
+      } else {
+        TypeMirror paramType = getParamTypeMirror(parameters.get(0), null);
+        TypeElement paramElement = (TypeElement) processingEnv.getTypeUtils().asElement(paramType);
+        paramHeadStr = getClassString(paramElement, myPackage);
+        paramClass = paramHeadStr + ".class";
+      }
       String methodName = method.getSimpleName().toString();
-      String paramClass = getClassString(paramElement, myPackage) + ".class";
 
       MBus subscribe = method.getAnnotation(MBus.class);
       String eventClass = "\"" + subscribe.type() + "\"";
+
+      //processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "qqqqqqqqqqqqqqeventclass/" + eventClass + "/" + paramClass);
+
+      if (eventClass == null || "\"\"".equals(eventClass)) {
+        if ("null".equals(paramClass)) {
+          continue;
+        } else {
+          eventClass = "\"" + paramHeadStr + "\"";
+        }
+      }
 
       List<String> parts = new ArrayList<>();
       parts.add(callPrefix + "(\"" + methodName + "\",");
