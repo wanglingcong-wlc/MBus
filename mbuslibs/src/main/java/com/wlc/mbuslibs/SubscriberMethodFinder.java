@@ -15,11 +15,6 @@
  */
 package com.wlc.mbuslibs;
 
-import android.content.Context;
-
-import com.wlc.Constants;
-import com.wlc.MBusUtils;
-
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -43,16 +38,15 @@ class SubscriberMethodFinder {
   private static final int POOL_SIZE = 4;
   private static final FindState[] FIND_STATE_POOL = new FindState[POOL_SIZE];
 
-  SubscriberMethodFinder(Context context, boolean strictMethodVerification,
-                         boolean ignoreGeneratedIndex) {
+  SubscriberMethodFinder(boolean strictMethodVerification,
+                         boolean ignoreGeneratedIndex, List<Class<SubscriberInfoIndex>> classList) {
     this.strictMethodVerification = strictMethodVerification;
     this.ignoreGeneratedIndex = ignoreGeneratedIndex;
-    initIndexes(context);
+    initIndexes(classList);
   }
 
-  void initIndexes(Context context) {
+  void initIndexes(List<Class<SubscriberInfoIndex>> classList) {
     subscriberInfoIndexes = new ArrayList<>();
-    List<Class<SubscriberInfoIndex>> classList = MBusUtils.<SubscriberInfoIndex>scanDex(context, Constants.MBUS_INDEX_HEAD);
     try {
       for (Class<SubscriberInfoIndex> c : classList) {
         subscriberInfoIndexes.add(c.newInstance());

@@ -2,6 +2,9 @@ package com.wlc.mbuslibs;
 
 import android.content.Context;
 
+import com.wlc.Constants;
+import com.wlc.MBase;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,7 +16,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.logging.Level;
 
 
-public class MBusMain {
+public class MBusMain extends MBase {
 
   public static final String NOEVENT = "noevent";
 
@@ -85,8 +88,8 @@ public class MBusMain {
     backgroundPoster = new BackgroundPoster(this);
     asyncPoster = new AsyncPoster(this);
     indexCount = builder.subscriberInfoIndexes != null ? builder.subscriberInfoIndexes.size() : 0;
-    subscriberMethodFinder = new SubscriberMethodFinder(context,
-        builder.strictMethodVerification, builder.ignoreGeneratedIndex);
+    subscriberMethodFinder = new SubscriberMethodFinder(builder.strictMethodVerification, builder.ignoreGeneratedIndex,
+        this.<SubscriberInfoIndex>scanDex(context, Constants.MBUS_INDEX_HEAD));
     logNoSubscriberMessages = builder.logNoSubscriberMessages;
     sendNoSubscriberEvent = builder.sendNoSubscriberEvent;
     executorService = builder.executorService;
@@ -188,8 +191,8 @@ public class MBusMain {
   }
 
   /**
-   * @param tag 发送的类型名称
-   * @param obj 参数
+   * @param tag      发送的类型名称
+   * @param obj      参数
    * @param callBack 返回值回调
    */
   public void post(String tag, Object obj, CallBack callBack) {

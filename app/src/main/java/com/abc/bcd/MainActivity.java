@@ -29,9 +29,9 @@ public class MainActivity extends BaseActivity {
     });
   }
 
-  @MBus(type = "")
+  @MBus
   public void click(String i) {
-    Log.e("qqqqqqqqqqqqqq","receive"+i);
+    Log.e("qqqqqqqqqqqqqq","receivenone"+i);
   }
 
   @MBus(type = "click")
@@ -39,6 +39,5 @@ public class MainActivity extends BaseActivity {
     Log.e("qqqqqqqqqqqqqq","receive"+i);
     return 3556;
   }
-
 
 }

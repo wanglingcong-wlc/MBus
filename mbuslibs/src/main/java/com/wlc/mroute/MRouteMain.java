@@ -8,7 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 
-import com.wlc.MBusUtils;
+import com.wlc.MBase;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.Map;
 
 import static com.wlc.Constants.MROUTE_INDEX_HEAD;
 
-public class MRouteMain {
+public class MRouteMain extends MBase {
   private static MRouteMain instance = null;
   private boolean hasInit;
 
@@ -77,7 +77,7 @@ public class MRouteMain {
 
 
   private void initIndexs(Context ctx, String entityPackage) {
-    List<Class<IRouteIndex>> classList = MBusUtils.<IRouteIndex>scanDex(ctx, entityPackage);
+    List<Class<IRouteIndex>> classList = scanDex(ctx, entityPackage);
     try {
       for (Class<IRouteIndex> c : classList) {
         initRouteIndex(c);

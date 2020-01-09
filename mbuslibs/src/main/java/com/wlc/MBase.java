@@ -1,6 +1,5 @@
 package com.wlc;
 
-
 import android.content.Context;
 
 import java.util.ArrayList;
@@ -10,8 +9,8 @@ import java.util.List;
 import dalvik.system.DexFile;
 import dalvik.system.PathClassLoader;
 
-public class MBusUtils {
-  public static <T> List<Class<T>> scanDex(Context ctx, String entityPackage) {
+public class MBase {
+  protected static <T> List<Class<T>> scanDex(Context ctx, String entityPackage) {
     List<Class<T>> cl = new ArrayList<>();
     try {
       PathClassLoader classLoader = (PathClassLoader) Thread
