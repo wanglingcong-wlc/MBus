@@ -1,5 +1,7 @@
 package com.wlc.mbuslibs;
 
+import android.content.Context;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,13 +53,9 @@ public class MBusMain {
   private final int indexCount;
   private final Logger logger;
 
-  public static MBusMain getDefault() {
+  public static MBusMain get() {
     if (defaultInstance == null) {
-      synchronized (MBusMain.class) {
-        if (defaultInstance == null) {
-          defaultInstance = new MBusMain();
-        }
-      }
+      throw new MBusException("mbus has not build, please call MBusMain.builder().build(context)");
     }
     return defaultInstance;
   }
@@ -73,11 +71,11 @@ public class MBusMain {
   }
 
 
-  public MBusMain() {
-    this(DEFAULT_BUILDER);
+  private MBusMain() {
+    this(DEFAULT_BUILDER, null);
   }
 
-  MBusMain(MBusBuilder builder) {
+  MBusMain(MBusBuilder builder, Context context) {
     logger = builder.getLogger();
     subscriptionsByEventType = new HashMap<>();
     typesBySubscriber = new HashMap<>();
@@ -87,13 +85,12 @@ public class MBusMain {
     backgroundPoster = new BackgroundPoster(this);
     asyncPoster = new AsyncPoster(this);
     indexCount = builder.subscriberInfoIndexes != null ? builder.subscriberInfoIndexes.size() : 0;
-    subscriberMethodFinder = new SubscriberMethodFinder(builder.subscriberInfoIndexes,
+    subscriberMethodFinder = new SubscriberMethodFinder(context,
         builder.strictMethodVerification, builder.ignoreGeneratedIndex);
     logNoSubscriberMessages = builder.logNoSubscriberMessages;
     sendNoSubscriberEvent = builder.sendNoSubscriberEvent;
     executorService = builder.executorService;
   }
-
 
   public void register(Object subscriber) {
     Class<?> subscriberClass = subscriber.getClass();
@@ -273,7 +270,6 @@ public class MBusMain {
       stickyEvents.clear();
     }
   }
-
 
 
   private void postSingleEvent(QueueSingle event, PostingThreadState postingState) throws Error {

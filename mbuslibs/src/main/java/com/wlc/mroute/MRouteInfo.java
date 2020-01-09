@@ -146,7 +146,7 @@ public final class MRouteInfo {
    * @param requestCode startActivityForResult's param
    */
   public void navigation(Context mContext, int requestCode) {
-    MRouteMain.getInstance().navigation(mContext, this, requestCode);
+    MRouteMain.get().navigation(mContext, this, requestCode);
   }
 
   /**

@@ -23,7 +23,7 @@ public class SecondActivity extends BaseActivity {
       public void onClick(View v) {
         //MBusMain.getDefault().register(SecondActivity.this);
         //MBusMain.getDefault().post("click", 999);
-        MRouteMain.getInstance().build("main").navigation(SecondActivity.this);
+        MRouteMain.get().build("main").navigation(SecondActivity.this);
 
       }
     });

@@ -15,6 +15,7 @@
  */
 package com.wlc.mbuslibs;
 
+import android.content.Context;
 import android.os.Looper;
 
 import java.util.ArrayList;
@@ -142,19 +143,19 @@ public class MBusBuilder {
     }
   }
 
-  public MBusMain installDefaultMBus() {
+  public MBusMain build(Context context) {
+    if (context == null) {
+      throw new MBusException("mbus init params is null!!!");
+    }
+
     synchronized (MBusMain.class) {
       if (MBusMain.defaultInstance != null) {
         throw new MBusException("Default instance already exists." +
             " It may be only set once before it's used the first time to ensure consistent behavior.");
       }
-      MBusMain.defaultInstance = build();
+      MBusMain.defaultInstance = new MBusMain(this, context.getApplicationContext());
       return MBusMain.defaultInstance;
     }
-  }
-
-  public MBusMain build() {
-    return new MBusMain(this);
   }
 
 }

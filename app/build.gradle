@@ -12,7 +12,7 @@ android {
 
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = [MROUTER_MODULE_NAME: project.getName(),MBusIndex: 'com.wlc.mbus.MBusIndex']
+                arguments = [MBUS_MODULE_NAME: project.getName(), MBUS_USE_INDEX: 'true']
                 includeCompileClasspath = true
             }
         }

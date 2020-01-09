@@ -1,6 +1,7 @@
 package com.wlc.mbusprocess;
 
 import com.google.auto.service.AutoService;
+import com.wlc.Constants;
 import com.wlc.mbuslibs.MBus;
 import com.wlc.mbuslibs.ThreadMode;
 
@@ -41,16 +42,19 @@ import javax.tools.JavaFileObject;
  * ExecutableElement：表示类或接口的方法、构造函数或初始化器（静态或实例），包括注释类型元素。
  * TypeElement :表示类和接口
  * PackageElement：表示包
- *
  */
 
 @AutoService(Processor.class)
 @SupportedAnnotationTypes("com.wlc.mbuslibs.MBus")
-@SupportedOptions(value = {"MBusIndex"})
+@SupportedOptions(value = {"MROUTER_MODULE_NAME", "MBUS_USE_INDEX"})
 public class MBusProcessor extends AbstractProcessor {
-  public static final String OPTION_EVENT_BUS_INDEX = "MBusIndex";
+  public static final String OPTION_MBUS_MODULE_NAME = "MBUS_MODULE_NAME";
+  public static final String OPTION_MBUS_USE_INDEX = "MBUS_USE_INDEX";
+  public static final String MBUS_INDEX = ".MBusIndex$";
 
-  /** Found subscriber methods for a class (without superclasses). */
+  /**
+   * Found subscriber methods for a class (without superclasses).
+   */
   private final HashMap<TypeElement, List<ExecutableElement>> methodsByClass = new HashMap<>();
   private final Set<TypeElement> classesToSkip = new HashSet<>();
 
@@ -66,14 +70,19 @@ public class MBusProcessor extends AbstractProcessor {
   public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment env) {
     Messager messager = processingEnv.getMessager();
     try {
-      String index = processingEnv.getOptions().get(OPTION_EVENT_BUS_INDEX);
-      if (index == null) {
-        messager.printMessage(Diagnostic.Kind.ERROR, "No option " + OPTION_EVENT_BUS_INDEX +
+      boolean useindex = Boolean.parseBoolean(processingEnv.getOptions().get(OPTION_MBUS_USE_INDEX));
+
+      if (!useindex) {
+        return true;
+      }
+
+      String module = processingEnv.getOptions().get(OPTION_MBUS_MODULE_NAME);
+      if (module == null) {
+        messager.printMessage(Diagnostic.Kind.ERROR, "No option " + OPTION_MBUS_MODULE_NAME +
             " passed to annotation processor");
         return false;
       }
-      int lastPeriod = index.lastIndexOf('.');
-      String indexPackage = lastPeriod != -1 ? index.substring(0, lastPeriod) : null;
+      String indexPackage = Constants.MBUS_INDEX_HEAD;
 
       round++;
       if (env.processingOver()) {
@@ -95,7 +104,7 @@ public class MBusProcessor extends AbstractProcessor {
       checkForSubscribersToSkip(messager, indexPackage);
 
       if (!methodsByClass.isEmpty()) {
-        createInfoIndexFile(index);
+        createInfoIndexFile(indexPackage + MBUS_INDEX + module);
       } else {
         messager.printMessage(Diagnostic.Kind.WARNING, "No @MBus annotations found");
       }
@@ -117,7 +126,7 @@ public class MBusProcessor extends AbstractProcessor {
           if (checkHasNoErrors(method, messager)) {
             TypeElement classElement = (TypeElement) method.getEnclosingElement();//每个有mbus的类
             List<ExecutableElement> list = methodsByClass.get(classElement);
-            if (list == null){
+            if (list == null) {
               list = new ArrayList<>();
             }
             list.add(method);

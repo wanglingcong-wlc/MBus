@@ -1,6 +1,7 @@
 package com.wlc.mrouteprocessor;
 
 import com.google.auto.service.AutoService;
+import com.wlc.Constants;
 import com.wlc.mroute.MRoute;
 
 import java.io.BufferedWriter;
@@ -34,10 +35,10 @@ import javax.tools.JavaFileObject;
 
 @AutoService(Processor.class)
 @SupportedAnnotationTypes("com.wlc.mroute.MRoute")
-@SupportedOptions(value = {"MROUTER_MODULE_NAME"})
+@SupportedOptions(value = {"MBUS_MODULE_NAME"})
 public class MRouteProcessor extends AbstractProcessor {
-  public static final String OPTION_MROUTE_INDEX = "MROUTER_MODULE_NAME";
-  public static final String INDEX_NAME = "com.wlc.mroute.index.MRouteIndex$";
+  public static final String OPTION_MROUTE_INDEX = "MBUS_MODULE_NAME";
+  public static final String INDEX_NAME = Constants.MROUTE_INDEX_HEAD + ".MRouteIndex$";
 
   private boolean writerRoundDone;
   private int round;

@@ -8,11 +8,13 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 
+import com.wlc.MBusUtils;
+
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import androidx.core.app.ActivityCompat;
 import dalvik.system.DexFile;
 import dalvik.system.PathClassLoader;
 
@@ -22,7 +24,7 @@ public class MRouteMain {
   private static MRouteMain instance = null;
   private boolean hasInit;
 
-  public static final MRouteMain getInstance() {
+  public static final MRouteMain get() {
     if (instance == null) {
       synchronized (MRouteMain.class) {
         if (instance == null) {
@@ -45,7 +47,7 @@ public class MRouteMain {
     hasInit = true;
     this.mApplication = application;
     mHandler = new Handler(Looper.getMainLooper());
-    scan(application, MROUTE_INDEX_HEAD);
+    initIndexs(application, MROUTE_INDEX_HEAD);
   }
 
   public void navigation(Context context, final MRouteInfo routeInfo, final int requestCode) {
@@ -77,22 +79,15 @@ public class MRouteMain {
     }
   }
 
-  public void scan(Context ctx, String entityPackage) {
-    try {
-      PathClassLoader classLoader = (PathClassLoader) Thread
-          .currentThread().getContextClassLoader();
 
-      DexFile dex = new DexFile(ctx.getPackageResourcePath());
-      Enumeration<String> entries = dex.entries();
-      while (entries.hasMoreElements()) {
-        String entryName = entries.nextElement();
-        if (entryName.contains(entityPackage)) {
-          Class<IRouteIndex> entryClass = (Class<IRouteIndex>) Class.forName(entryName, true, classLoader);
-          initRouteIndex(entryClass);
-        }
+  private void initIndexs(Context ctx, String entityPackage) {
+    List<Class<IRouteIndex>> classList = MBusUtils.<IRouteIndex>scanDex(ctx, entityPackage);
+    try {
+      for (Class<IRouteIndex> c : classList) {
+        initRouteIndex(c);
       }
     } catch (Exception e) {
-      e.printStackTrace();
+      mRouteIndex.clear();
     }
   }
 
@@ -104,12 +99,12 @@ public class MRouteMain {
   private void startActivity(int requestCode, Context currentContext, Intent intent, MRouteInfo routeInfo) {
     if (requestCode >= 0) {  // Need start for result
       if (currentContext instanceof Activity) {
-        ActivityCompat.startActivityForResult((Activity) currentContext, intent, requestCode, null);
+        ((Activity) currentContext).startActivityForResult(intent, requestCode);
       } else {
         //log something
       }
     } else {
-      ActivityCompat.startActivity(currentContext, intent, null);
+      currentContext.startActivity(intent);
     }
 
     if ((-1 != routeInfo.getEnterAnim() && -1 != routeInfo.getExitAnim()) && currentContext instanceof Activity) {    // Old version.

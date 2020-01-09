@@ -9,7 +9,7 @@ public class MyApplication extends Application {
   @Override
   public void onCreate() {
     super.onCreate();
-    MBusMain.builder().addIndex(new MBusIndex()).addIndex(new com.wlc.mbus.secondmodule.MBusIndex()).installDefaultMBus();
-    MRouteMain.getInstance().init(this);
+    MBusMain.builder().build(this);
+    MRouteMain.get().init(this);
   }
 }

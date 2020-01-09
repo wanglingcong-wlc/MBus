@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.wlc.R;
 import com.wlc.mbuslibs.MBus;
 import com.wlc.mroute.MRoute;
 import com.wlc.mroute.MRouteMain;
@@ -20,9 +21,9 @@ public class MainActivity extends BaseActivity {
     findViewById(R.id.text).setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        MRouteMain.getInstance().build("secondactivity").navigation(MainActivity.this);
+        MRouteMain.get().build("secondactivity").navigation(MainActivity.this);
         //MBusMain.getDefault().register(MainActivity.this);
-        //MBusMain.getDefault().post("click", 999);
+        //MBusMain.get().post("click", 999);
       }
     });
   }
@@ -33,6 +34,7 @@ public class MainActivity extends BaseActivity {
 
   @MBus(type = "click")
   public int click(Integer i) {
+    Log.e("qqqqqqqqqqqqqq","receive"+i);
     return 3556;
   }
 

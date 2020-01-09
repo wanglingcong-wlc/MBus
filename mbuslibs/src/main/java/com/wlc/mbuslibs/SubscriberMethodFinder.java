@@ -15,6 +15,11 @@
  */
 package com.wlc.mbuslibs;
 
+import android.content.Context;
+
+import com.wlc.Constants;
+import com.wlc.MBusUtils;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -38,11 +43,23 @@ class SubscriberMethodFinder {
   private static final int POOL_SIZE = 4;
   private static final FindState[] FIND_STATE_POOL = new FindState[POOL_SIZE];
 
-  SubscriberMethodFinder(List<SubscriberInfoIndex> subscriberInfoIndexes, boolean strictMethodVerification,
+  SubscriberMethodFinder(Context context, boolean strictMethodVerification,
                          boolean ignoreGeneratedIndex) {
-    this.subscriberInfoIndexes = subscriberInfoIndexes;
     this.strictMethodVerification = strictMethodVerification;
     this.ignoreGeneratedIndex = ignoreGeneratedIndex;
+    initIndexes(context);
+  }
+
+  void initIndexes(Context context) {
+    subscriberInfoIndexes = new ArrayList<>();
+    List<Class<SubscriberInfoIndex>> classList = MBusUtils.<SubscriberInfoIndex>scanDex(context, Constants.MBUS_INDEX_HEAD);
+    try {
+      for (Class<SubscriberInfoIndex> c : classList) {
+        subscriberInfoIndexes.add(c.newInstance());
+      }
+    } catch (Exception e) {
+      subscriberInfoIndexes.clear();
+    }
   }
 
   List<SubscriberMethod> findSubscriberMethods(Class<?> subscriberClass) {
@@ -51,7 +68,7 @@ class SubscriberMethodFinder {
       return subscriberMethods;
     }
 
-    if (ignoreGeneratedIndex) {
+    if (ignoreGeneratedIndex || subscriberInfoIndexes == null || subscriberInfoIndexes.isEmpty()) {
       subscriberMethods = findUsingReflection(subscriberClass);
     } else {
       subscriberMethods = findUsingInfo(subscriberClass);
@@ -242,7 +259,7 @@ class SubscriberMethodFinder {
       } else {
         clazz = clazz.getSuperclass();
         String clazzName = clazz.getName();
-        if (clazzName.startsWith("java.") || clazzName.startsWith("javax.") || clazzName.startsWith("android.")|| clazzName.startsWith("androidx.")) {
+        if (clazzName.startsWith("java.") || clazzName.startsWith("javax.") || clazzName.startsWith("android.") || clazzName.startsWith("androidx.")) {
           clazz = null;
         }
       }

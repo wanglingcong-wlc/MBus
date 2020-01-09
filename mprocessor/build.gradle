@@ -37,16 +37,9 @@ publish {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-
     implementation project(':mbuslibs')
 
     implementation 'com.google.auto.service:auto-service:1.0-rc2'
-
     annotationProcessor 'com.google.auto.service:auto-service:1.0-rc2'
 
     implementation files('/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home/jre/lib/rt.jar')
