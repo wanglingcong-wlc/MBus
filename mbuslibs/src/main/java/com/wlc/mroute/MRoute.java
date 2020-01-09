@@ -1,7 +1,5 @@
 package com.wlc.mroute;
 
-import com.wlc.mbuslibs.ThreadMode;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

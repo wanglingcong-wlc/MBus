@@ -179,6 +179,10 @@ public class MBusMain {
     }
   }
 
+  /**
+   * @param tag 发送的类型名称
+   * @param obj 参数
+   */
   public void post(String tag, Object obj) {
     post(tag, obj, null);
   }
@@ -186,6 +190,7 @@ public class MBusMain {
   /**
    * @param tag 发送的类型名称
    * @param obj 参数
+   * @param callBack 返回值回调
    */
   public void post(String tag, Object obj, CallBack callBack) {
     PostingThreadState postingState = currentPostingThreadState.get();

@@ -1,4 +1,4 @@
-package com.wlc.mbus;
+package com.abc.bcd;
 
 import android.app.Application;
 

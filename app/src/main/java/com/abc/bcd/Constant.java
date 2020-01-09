@@ -1,4 +1,4 @@
-package com.wlc.mbus;
+package com.abc.bcd;
 
 /**
  * Created on 2019-12-03.

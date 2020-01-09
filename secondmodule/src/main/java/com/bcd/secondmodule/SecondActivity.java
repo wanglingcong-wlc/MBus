@@ -1,13 +1,13 @@
-package com.wlc.secondmodule;
+package com.bcd.secondmodule;
 
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import com.wlc.mbuslibs.MBus;
 import com.wlc.mroute.MRoute;
 import com.wlc.mroute.MRouteMain;
+import com.wlc.secondmodule.R;
 
 @MRoute(path = "secondactivity")
 public class SecondActivity extends BaseActivity {

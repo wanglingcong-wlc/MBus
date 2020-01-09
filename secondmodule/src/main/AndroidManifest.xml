@@ -2,6 +2,6 @@
     package="com.wlc.secondmodule">
 
   <application>
-    <activity android:name=".SecondActivity"></activity>
+    <activity android:name="com.bcd.secondmodule.SecondActivity"></activity>
   </application>
 </manifest>

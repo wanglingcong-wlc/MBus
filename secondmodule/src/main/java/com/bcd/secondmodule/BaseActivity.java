@@ -1,4 +1,4 @@
-package com.wlc.secondmodule;
+package com.bcd.secondmodule;
 
 import android.os.Bundle;
 
