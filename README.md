@@ -1,12 +1,113 @@
 # MBus
 Changed EventBus and Arouter
 
-### 修改版EventBus
-* 注册方法和eventbus相同
-* 使用String作为event的type，必须在@MBus的注解中声明
-* 声明@MBus的方法必须且只能有一个参数，参数类型随意，匹配时会根据type和参数类型，找到符合的方法并调用
-* 可以设置返回值的监听对象，见项目demo
-* 优化了使用反射扫描类时过滤的父类中少掉的androidx包
+### 简介
+* 使用String作为event的type，也可以不填，之前的eventbus的@subscribe可以直接转为@MBus
+* 声明@MBus的方法可以有0个或1个参数，参数类型随意，匹配时会根据type和参数类型，找到符合的方法并调用
+* 可以设置返回值的监听对象，也就是说@MBus注册的方法可以有返回值，见详情
+* 优化了使用扫描父类时的过滤中少掉的androidx包，减少不必要的反射，性能提升30%
+* 简便的路由跳转，@MRoute注解到相应类前，使用即可跳转，支持携带参数，支持startActivityForResult
 
-### 简化版Arouter
-* @MRoute注解到相应类中，使用即可跳转，支持携带参数，支持startActivityForResult
+### 使用方法
+
+1.在module的build.gradle的dependencies中加入引用
+```
+implementation 'com.wlc:MBus:1.1.0'
+annotationProcessor 'com.wlc:MBusProcessor:1.1.0'
+```
+
+2.android的defaultConfig下面加入注解配置，MBUS_USE_INDEX标识是否使用索引，使用索引可以提升性能，赋值为true或false。
+```
+android {    
+    defaultConfig {
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [MBUS_MODULE_NAME: project.getName(), MBUS_USE_INDEX: 'true']
+                includeCompileClasspath = true
+            }
+        }
+    }
+}
+```
+3.混淆文件
+```
+-keep class com.wlc.**{*;}
+-keepattributes *Annotation*
+-keepclassmembers class ** {
+    @com.wlc.mbuslibs.MBus <methods>;
+}
+-keep @com.wlc.mroute.MRoute class * {*;}
+-keep enum com.wlc.mbuslibs.ThreadMode { *; }
+-ignorewarning
+```
+4.初始化，无论在什么位置，应首先调用一次
+```
+MBusMain.builder().build(Context);
+```
+builder可以配置各种属性，详见MBusBuilder，常用的可以设置是否不使用索引，默认是使用索引的
+```
+MBusMain.builder().ignoreGeneratedIndex(true).build(this);
+```
+如果也使用路由跳转的话，同样也需要初始化一次
+```
+MRouteMain.get().init(Context);
+```
+5.在类中使用，在方法前加入@MBus索引
+* type为事件类型，使用字符串标记，在后面发送的时候使用相同字符串即可收到事件，可以为空，但是type和方法的参数不能同时为空
+* ThreadMode
+  * MAIN 在主线程执行
+  * THREADPOOL 后台线程执行
+  * THREADNOW 当前线程立即执行
+* isSticky 是否为粘性事件
+```
+  @MBus
+  public int click(EventT i) {//可以不写type，但是type和param必须有一个
+    
+    return 3556;
+  }
+  
+  @MBus(type = "login", threadMode = ThreadMode.MAIN, isSticky = false)
+  public void click(String i) {
+    
+  }
+  
+  @MBus(type = "login")
+  public boolean login() {//可以设置返回值
+    
+    return true;
+  }
+```
+6.使用索引的话，在类前面使用@MRoute，path为注册的地址
+```
+@MRoute(path = "main")
+public class MainActivity extends BaseActivity {
+}
+```
+7.在类初始化时进行register
+```
+MBusMain.get().register(Object);
+```
+类销毁时注销
+```
+MBusMain.get().unregister(object);
+```
+8.发送事件，分别对应上面三个方法
+```
+MBusMain.get().post(new EventT());
+MBusMain.get().post("login", "username");
+MBusMain.get().post("login", null, new CallBack() {//可以接受返回值的事件
+          @Override
+          public void onReturn(Object o) {
+            
+          }
+});
+
+MBusMain.get().postSticky(new EventT()); //发送粘性事件
+```
+9.使用路由
+```
+        MRouteMain.get().build("main").navigation(context);//跳转到path为main的activity
+        MRouteMain.get().build("main").withString("username", "wlc").navigation(SecondActivity.this);//携带参数
+        //使用startActivityForResult，requestCode为1001
+        MRouteMain.get().build("main").withString("username", "wlc").navigation(SecondActivity.this, 1001);
+```
