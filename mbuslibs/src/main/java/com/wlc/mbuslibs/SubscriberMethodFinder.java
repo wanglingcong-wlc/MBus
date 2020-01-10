@@ -168,10 +168,10 @@ class SubscriberMethodFinder {
         Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes.length <= 1) {
           MBus subscribeAnnotation = method.getAnnotation(MBus.class);
-          if (TextUtils.isEmpty(subscribeAnnotation.type()) && (parameterTypes == null || parameterTypes.length == 0)){
-            throw new MBusException("type and param can not be null both");
-          }
           if (subscribeAnnotation != null) {
+            if (TextUtils.isEmpty(subscribeAnnotation.type()) && (parameterTypes == null || parameterTypes.length == 0)){
+              throw new MBusException("type and param can not be null both");
+            }
             if (findState.checkAdd(method, subscribeAnnotation.type())) {
               ThreadMode threadMode = subscribeAnnotation.threadMode();
 
