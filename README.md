@@ -49,7 +49,8 @@ builder可以配置各种属性，详见MBusBuilder，常用的可以设置是�
 MBusMain.builder().ignoreGeneratedIndex(true).build(this);
 ```
 如果也使用路由跳转的话，同样也需要初始化一次
-```MRouteMain.get().init(Context);
+```
+MRouteMain.get().init(Context);
 ```
 5.在类中使用，在方法前加入@MBus索引
 * type为事件类型，使用字符串标记，在后面发送的时候使用相同字符串即可收到事件，可以为空，但是type和方法的参数不能同时为空
@@ -77,21 +78,21 @@ MBusMain.builder().ignoreGeneratedIndex(true).build(this);
   }
 ```
 6.使用索引的话，在类前面使用@MRoute，path为注册的地址
-`
+```
 @MRoute(path = "main")
 public class MainActivity extends BaseActivity {
 }
-`
+```
 7.在类初始化时进行register
-`
+```
 MBusMain.get().register(Object);
-`
+```
 类销毁时注销
-`
+```
 MBusMain.get().unregister(object);
-`
+```
 8.发送事件，分别对应上面三个方法
-`
+```
 MBusMain.get().post(new EventT());
 MBusMain.get().post("login", "username");
 MBusMain.get().post("login", null, new CallBack() {//可以接受返回值的事件
@@ -102,11 +103,11 @@ MBusMain.get().post("login", null, new CallBack() {//可以接受返回值的事
 });
 
 MBusMain.get().postSticky(new EventT()); //发送粘性事件
-`
+```
 9.使用路由
-`
+```
         MRouteMain.get().build("main").navigation(context);//跳转到path为main的activity
         MRouteMain.get().build("main").withString("username", "wlc").navigation(SecondActivity.this);//携带参数
         //使用startActivityForResult，requestCode为1001
         MRouteMain.get().build("main").withString("username", "wlc").navigation(SecondActivity.this, 1001);
-`
+```
