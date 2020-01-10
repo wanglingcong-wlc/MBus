@@ -9,7 +9,7 @@ public class MyApplication extends Application {
   @Override
   public void onCreate() {
     super.onCreate();
-    MBusMain.builder().build(this);
+    MBusMain.builder().ignoreGeneratedIndex(true).build(this);
     MRouteMain.get().init(this);
   }
 }

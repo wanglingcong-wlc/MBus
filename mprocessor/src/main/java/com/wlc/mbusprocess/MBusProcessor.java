@@ -300,11 +300,12 @@ public class MBusProcessor extends AbstractProcessor {
 
       //processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "qqqqqqqqqqqqqqeventclass/" + eventClass + "/" + paramClass);
 
-      if (eventClass == null || "\"\"".equals(eventClass)) {
-        if ("null".equals(paramClass)) {
+      if (eventClass == null || "\"\"".equals(eventClass)) {//类型为空
+        if ("null".equals(paramClass)) {//参数也是空
+          processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "the method with @MBus, its type and param can not be null both");
           continue;
         } else {
-          eventClass = "\"" + paramHeadStr + "\"";
+          eventClass = paramClass + ".getName()";
         }
       }
 
