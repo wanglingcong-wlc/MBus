@@ -3,7 +3,7 @@ Changed EventBus and Arouter
 
 ### 简介
 * 使用String作为event的type，也可以不填，之前的eventbus的@subscribe可以直接转为@MBus
-* 声明@MBus的方法可以有0个或1个参数，参数类型随意，匹配时会根据type和参数类型，找到符合的方法并调用
+* 声明@MBus的方法可以有0个或1个参数，参数类型**除基本类型外**随意，必须是类对象，比如Integer，匹配时会根据type和参数类型，找到符合的方法并调用
 * 可以设置返回值的监听对象，也就是说@MBus注册的方法可以有返回值，见详情
 * 优化了使用扫描父类时的过滤中少掉的androidx包，减少不必要的反射，性能提升30%
 * 简便的路由跳转，@MRoute注解到相应类前，使用即可跳转，支持携带参数，支持startActivityForResult
