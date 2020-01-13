@@ -60,6 +60,20 @@ MRouteMain.get().init(Context);
   * THREADNOW 当前线程立即执行
 * isSticky 是否为粘性事件
 ```
+  //!!!注意不要使用这种注册
+  @MBus
+  public int click(String i) {//这种注册是找不到这个方法的，如果参数是String，请使用下面的方法
+    
+    return 3556;
+  }
+
+  @MBus(type = "login")
+  public int click(String i) {//参数为String时，必须带上type的类型
+    
+    return 3556;
+  }
+```
+```
   @MBus
   public int click(EventT i) {//可以不写type，但是type和param必须有一个
     
