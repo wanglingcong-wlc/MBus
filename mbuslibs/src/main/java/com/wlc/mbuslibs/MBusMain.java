@@ -91,7 +91,7 @@ public class MBusMain extends MBase {
     asyncPoster = new AsyncPoster(this);
     indexCount = builder.subscriberInfoIndexes != null ? builder.subscriberInfoIndexes.size() : 0;
     subscriberMethodFinder = new SubscriberMethodFinder(builder.strictMethodVerification, builder.ignoreGeneratedIndex,
-        this.<SubscriberInfoIndex>scanDex(context, Constants.MBUS_INDEX_HEAD));
+        this.<SubscriberInfoIndex>getFileNameByPackageName(context, Constants.MBUS_INDEX_HEAD));
     logNoSubscriberMessages = builder.logNoSubscriberMessages;
     sendNoSubscriberEvent = builder.sendNoSubscriberEvent;
     executorService = builder.executorService;
@@ -213,7 +213,7 @@ public class MBusMain extends MBase {
    */
   public void post(String tag, Object obj, CallBack callBack) {
     if (obj == null && TextUtils.isEmpty(tag)) {
-      throw new MBusException("type and param can not be null both");
+      throw new MBusException("type and param can not be null both or do not call post(new String())");
     }
     if (TextUtils.isEmpty(tag)){
       tag = obj.getClass().getName();

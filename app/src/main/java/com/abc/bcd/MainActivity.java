@@ -11,6 +11,7 @@ import com.wlc.mbuslibs.MBus;
 import com.wlc.mbuslibs.MBusMain;
 import com.wlc.mbuslibs.ThreadMode;
 import com.wlc.mroute.MRoute;
+import com.wlc.mroute.MRouteMain;
 
 
 @MRoute(path = "main")
@@ -25,35 +26,28 @@ public class MainActivity extends BaseActivity {
     findViewById(R.id.text).setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        //MRouteMain.get().build("secondactivity").navigation(MainActivity.this);
+        MRouteMain.get().build("secondactivity").navigation(MainActivity.this);
         //MBusMain.get().register(MainActivity.this);
-        MBusMain.get().post("click", 999);
-        MBusMain.get().post("login", null, new CallBack() {
-          @Override
-          public void onReturn(Object o) {
-
-          }
-        });
-        MBusMain.get().postSticky(new EventT());
+//        MBusMain.get().post("test");
+//        MBusMain.get().post(new Boolean(false));
+//        MBusMain.get().post("test2",333);
 
       }
     });
   }
 
-  @MBus(type = "login", threadMode = ThreadMode.MAIN, isSticky = false)
-  public void click(String i) {
-    Log.e("qqqqqqqqqqqqqq", "receivenone" + i);
+  @MBus(type = "test")
+  public void testmbus(){
+    Log.e("qqqqqqqqqqq","receive test");
   }
 
   @MBus
-  public int click(EventT i) {
-    Log.e("qqqqqqqqqqqqqq", "receive" + i);
-    return 3556;
+  public void testmbus2(Boolean obj){
+    Log.e("qqqqqqqqqqq","receive string");
   }
 
-  @MBus
-  public int click123(Integer i) {
-    Log.e("qqqqqqqqqqqqqq", "receive null params");
-    return 3556;
+  @MBus(type = "test2",threadMode = ThreadMode.THREADPOOL)
+  public void testmbus3(Integer i){
+    Log.e("qqqqqqqqqqq","receive int");
   }
 }

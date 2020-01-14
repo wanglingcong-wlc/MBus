@@ -48,6 +48,9 @@ public class MRouteMain extends MBase {
 
   public void navigation(Context context, final MRouteInfo routeInfo, final int requestCode) {
     final Context currentContext = null == context ? mApplication : context;
+    if (currentContext == null){
+      throw new MRouteException("please call MRouteMain.get().init(context) before navigation");
+    }
     final Intent intent = new Intent(currentContext, routeInfo.getPathClass());
     intent.putExtras(routeInfo.getExtras());
 
@@ -77,7 +80,7 @@ public class MRouteMain extends MBase {
 
 
   private void initIndexs(Context ctx, String entityPackage) {
-    List<Class<IRouteIndex>> classList = scanDex(ctx, entityPackage);
+    List<Class<IRouteIndex>> classList = getFileNameByPackageName(ctx, entityPackage);
     try {
       for (Class<IRouteIndex> c : classList) {
         initRouteIndex(c);
