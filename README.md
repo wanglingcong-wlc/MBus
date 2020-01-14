@@ -8,6 +8,7 @@ Changed EventBus and Arouter
 * 开启索引时注解配置简化
 * 优化了使用扫描父类时的过滤中少掉的androidx包，减少不必要的反射，性能提升30%
 * 简便的路由跳转，@MRoute注解到相应类前，使用即可跳转，支持携带参数，支持startActivityForResult
+* 支持MultiDex(Google)
 
 ### 使用方法
 
