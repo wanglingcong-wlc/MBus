@@ -14,8 +14,8 @@ Changed EventBus and Arouter
 
 1.在module的build.gradle的dependencies中加入引用
 ```
-implementation 'com.wlc:MBus:1.1.3'
-annotationProcessor 'com.wlc:MBusProcessor:1.1.3'
+implementation 'com.wlc:MBus:1.1.5'
+annotationProcessor 'com.wlc:MBusProcessor:1.1.5'
 ```
 
 2.android的defaultConfig下面加入注解配置，MBUS_USE_INDEX标识是否使用索引，使用索引可以提升性能，赋值为true或false。
