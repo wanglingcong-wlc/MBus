@@ -1,20 +1,20 @@
 package com.abc.bcd;
 
 
+import android.app.usage.UsageEvents;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+
 import com.abc.EventT;
-import com.wlc.mbuslibs.CallBack;
-import com.wlc.mbuslibs.MBus;
-import com.wlc.mbuslibs.MBusMain;
-import com.wlc.mbuslibs.ThreadMode;
-import com.wlc.mroute.MRoute;
-import com.wlc.mroute.MRouteMain;
+
+import org.greenrobot.eventbus.CallBack;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 
-@MRoute(path = "main")
 public class MainActivity extends BaseActivity {
 
   @Override
@@ -26,27 +26,37 @@ public class MainActivity extends BaseActivity {
     findViewById(R.id.text).setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        MRouteMain.get().build("secondactivity").navigation(MainActivity.this);
-        //MBusMain.get().register(MainActivity.this);
-//        MBusMain.get().post("test");
-//        MBusMain.get().post(new Boolean(false));
-//        MBusMain.get().post("test2",333);
+        //MRouteMain.get().build("secondactivity").navigation(MainActivity.this);
+        //EventBus.getDefault().register(MainActivity.this);
+        EventBus.getDefault().post("test");
+        EventBus.getDefault().post(new Boolean(false));
+        EventBus.getDefault().post("test2", 333, new CallBack() {
+          @Override
+          public void onReturn(Object o) {
 
+          }
+        });
+        EventBus.getDefault().post(new EventT());
       }
     });
   }
 
-  @MBus(type = "test")
+  @Subscribe
+  public void test_object(EventT eventT){
+    Log.e("qqqqqqqqqqq","receive test_object");
+  }
+
+  @Subscribe(type = "test")
   public void testmbus(){
     Log.e("qqqqqqqqqqq","receive test");
   }
 
-  @MBus
+  @Subscribe
   public void testmbus2(Boolean obj){
     Log.e("qqqqqqqqqqq","receive string");
   }
 
-  @MBus(type = "test2",threadMode = ThreadMode.THREADPOOL)
+  @Subscribe(type = "test2",threadMode = ThreadMode.MAIN)
   public void testmbus3(Integer i){
     Log.e("qqqqqqqqqqq","receive int");
   }

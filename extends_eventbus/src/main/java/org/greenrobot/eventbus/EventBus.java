@@ -54,7 +54,7 @@ public class EventBus extends MBase {
   private final int indexCount;
   private final Logger logger;
 
-  public static EventBus get() {
+  public static EventBus getDefault() {
     if (defaultInstance == null) {
       throw new EventBusException("mbus has not build, please call EventBus.builder().build(context)");
     }

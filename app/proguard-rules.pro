@@ -20,13 +20,14 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep class com.wlc.**{*;}
+#-keep class com.wlc.**{*;}
 # keep住源文件以及行号
 -keepattributes SourceFile,LineNumberTable
 -keepattributes *Annotation*
 -keepclassmembers class ** {
-    @com.wlc.mbuslibs.MBus <methods>;
+    @org.greenrobot.eventbus.Subscribe <methods>;
 }
--keep @com.wlc.mroute.MRoute class * {*;}
--keep enum com.wlc.mbuslibs.ThreadMode { *; }
+
+-keep enum org.greenrobot.eventbus.ThreadMode { *; }
+-keep class org.greenrobot.eventbus.index.**{*;}
 -ignorewarning
