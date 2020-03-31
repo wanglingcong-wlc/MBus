@@ -9,6 +9,8 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/extends_eventbus" />
+            <option value="$PROJECT_DIR$/extends_eventbus_annotationprocessor" />
             <option value="$PROJECT_DIR$/mbuslibs" />
             <option value="$PROJECT_DIR$/mprocessor" />
             <option value="$PROJECT_DIR$/secondmodule" />

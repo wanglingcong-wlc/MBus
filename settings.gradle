@@ -1,2 +1,2 @@
-include ':app', ':mbuslibs', ':mprocessor', ':secondmodule'
+include ':app', ':mbuslibs', ':mprocessor', ':secondmodule', ':extends_eventbus', ':extends_eventbus_annotationprocessor'
 rootProject.name='MBus'
