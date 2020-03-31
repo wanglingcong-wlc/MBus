@@ -66,9 +66,8 @@ public class MBase {
    * @return 所有class的集合
    */
   protected <T> List<Class<T>> getFileNameByPackageName(Context context, final String packageName) {
+    final List<Class<T>> classNames = new ArrayList<>();
     try {
-      final List<Class<T>> classNames = new ArrayList<>();
-
       List<String> paths = getSourcePaths(context);
       final CountDownLatch parserCtl = new CountDownLatch(paths.size());
 
@@ -95,7 +94,7 @@ public class MBase {
                 }
               }
             } catch (Throwable ignore) {
-              Log.e("ARouter", "Scan map file in dex files made error.", ignore);
+              Log.e("EventBus", "Scan map file in dex files made error.", ignore);
             } finally {
               if (null != dexfile) {
                 try {
@@ -113,8 +112,9 @@ public class MBase {
       parserCtl.await();
       return classNames;
     } catch (Exception e) {
-      throw new EventBusException("Subscribe or MRoute init failed", e);
+      e.printStackTrace();
     }
+    return classNames;
   }
 
 
